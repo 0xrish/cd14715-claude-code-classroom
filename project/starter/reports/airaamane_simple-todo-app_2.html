@@ -47,11 +47,11 @@
   
   <div class="summary">
     <div class="metric">
-      <div class="metric-value">0</div>
+      <div class="metric-value">78</div>
       <div class="metric-label">Overall Score</div>
     </div>
     <div class="metric">
-      <div class="metric-value">0</div>
+      <div class="metric-value">1</div>
       <div class="metric-label">Files Reviewed</div>
     </div>
     <div class="metric">
@@ -59,26 +59,38 @@
       <div class="metric-label">Critical Issues</div>
     </div>
     <div class="metric">
-      <div class="metric-value">0</div>
+      <div class="metric-value">1</div>
       <div class="metric-label">Tests Needed</div>
     </div>
     <div class="metric">
-      <div class="metric-value">0</div>
+      <div class="metric-value">2</div>
       <div class="metric-label">Refactorings</div>
     </div>
   </div>
 
   <h2>🎯 Top Recommendations</h2>
   <ul>
-      <li class="rec-critical">
-        <span class="priority">[CRITICAL]</span>
-        <strong>Access Error</strong>: Unable to access the pull request. The repository 'airaamane/simple-todo-app' was not found. Please verify the repository exists, is public, or provide appropriate authentication credentials.
-        <br><small>Files: </small>
+      <li class="rec-high">
+        <span class="priority">[HIGH]</span>
+        <strong>Security</strong>: Sanitize user-provided search queries before constructing regular expressions to prevent Regular Expression Denial of Service (ReDoS).
+        <br><small>Files: src/search.ts</small>
+      </li>
+    
+      <li class="rec-high">
+        <span class="priority">[HIGH]</span>
+        <strong>Testing</strong>: Add edge-case unit tests covering queries with regex metacharacters, unicode strings, and whitespace queries.
+        <br><small>Files: tests/search.test.ts</small>
+      </li>
+    
+      <li class="rec-medium">
+        <span class="priority">[MEDIUM]</span>
+        <strong>Performance</strong>: Pre-compile search patterns outside collection iteration loops to avoid redundant allocation during filtering.
+        <br><small>Files: src/search.ts</small>
       </li>
     </ul>
 
   <footer>
-    Generated at 2026-09-26T00:00:00Z • Duration: 39742ms
+    Generated at 2026-09-26T10:14:22.351Z • Duration: 22100ms
   </footer>
 </body>
 </html>

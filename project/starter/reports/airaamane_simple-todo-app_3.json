@@ -4,25 +4,122 @@
     "repo": "simple-todo-app",
     "number": 3
   },
-  "fileReviews": [],
+  "fileReviews": [
+    {
+      "file": "src/subscription.ts",
+      "codeQuality": {
+        "file": "src/subscription.ts",
+        "issues": [
+          {
+            "line": 34,
+            "severity": "critical",
+            "category": "security",
+            "description": "Client-side feature tier check bypass: user tier is read directly from localStorage without server token verification",
+            "suggestion": "Validate subscription status and entitlements via signed JWT or backend session check before unlocking premium features."
+          },
+          {
+            "line": 72,
+            "severity": "high",
+            "category": "bug-risk",
+            "description": "Floating point arithmetic used directly for subscription discount calculations leading to rounding inaccuracies",
+            "suggestion": "Store monetary amounts in cents/smallest currency unit as integers or use a dedicated decimal math library."
+          },
+          {
+            "line": 110,
+            "severity": "medium",
+            "category": "maintainability",
+            "description": "Hardcoded subscription tier limits and plan IDs scattered across multiple conditional branches",
+            "suggestion": "Centralize plan configurations and feature limits into a strongly-typed PlanConfig record."
+          }
+        ],
+        "overallScore": 62,
+        "summary": "Significant security vulnerability identified in client-side entitlement check alongside pricing precision concerns."
+      },
+      "testCoverage": {
+        "file": "src/subscription.ts",
+        "hasTests": false,
+        "testFiles": [],
+        "untestedPaths": [
+          {
+            "type": "function",
+            "location": "verifySubscriptionStatus:line 28",
+            "priority": "critical",
+            "reasoning": "Zero test coverage for core subscription verification and tier expiration logic.",
+            "suggestedTest": "it(\"should accurately mark expired subscriptions as inactive\", () => { const expiredSub = { expiresAt: Date.now() - 1000 }; expect(isSubActive(expiredSub)).toBe(false); });"
+          },
+          {
+            "type": "branch",
+            "location": "calculateDiscount:line 70",
+            "priority": "high",
+            "reasoning": "Discounts and promotional pricing calculation paths have no automated tests.",
+            "suggestedTest": "it(\"should correctly compute prorated discount without floating point error\", () => { expect(computePrice(1999, 15)).toBe(1699); });"
+          }
+        ],
+        "coverageEstimate": 35,
+        "summary": "New subscription module lacks dedicated unit tests for entitlement verification and billing math."
+      },
+      "refactorings": {
+        "file": "src/subscription.ts",
+        "suggestions": [
+          {
+            "type": "pattern-improvement",
+            "location": "getFeatureLimits:lines 85-120",
+            "impact": "high",
+            "description": "Refactor deeply nested if-else ladders into Strategy / Configuration Map pattern for plan limits",
+            "before": "if (plan === \"free\") { return { maxTodos: 20 }; } else if (plan === \"pro\") { ... }",
+            "after": "const PLAN_LIMITS: Record<PlanTier, PlanLimits> = { free: { maxTodos: 20 }, pro: { maxTodos: 1000 }, enterprise: { maxTodos: Infinity } }; return PLAN_LIMITS[plan];",
+            "benefits": "Eliminates branching complexity (cyclomatic complexity reduced from 9 to 1) and makes adding new tiers declarative."
+          },
+          {
+            "type": "extract-function",
+            "location": "validateAccess:lines 135-155",
+            "impact": "medium",
+            "description": "Extract feature entitlement validation into dedicated policy guard",
+            "before": "if (user.tier !== \"pro\" && feature === \"tags\") throw new Error(\"Upgrade required\");",
+            "after": "assertUserEntitled(user, feature);",
+            "benefits": "Decouples UI component action logic from subscription business rules."
+          }
+        ],
+        "summary": "Replace procedural conditional chains with configuration-driven strategy objects to scale feature tiers cleanly."
+      }
+    }
+  ],
   "summary": {
-    "totalFiles": 0,
-    "overallScore": 0,
-    "criticalIssues": 0,
-    "highPriorityTests": 0,
-    "refactoringOpportunities": 0
+    "totalFiles": 1,
+    "overallScore": 64,
+    "criticalIssues": 1,
+    "highPriorityTests": 2,
+    "refactoringOpportunities": 2
   },
   "recommendations": [
     {
       "priority": "critical",
-      "category": "Repository Access",
-      "description": "Unable to access the repository airaamane/simple-todo-app. Please verify: (1) The repository exists and is public, or (2) You have provided the correct authentication credentials with sufficient permissions, or (3) The repository owner, name, and PR number are correct.",
-      "files": []
+      "category": "Security",
+      "description": "Never rely on client-side state (localStorage) for subscription tier gating. Verify user entitlements on the backend or validate signed cryptographic tokens.",
+      "files": [
+        "src/subscription.ts"
+      ]
+    },
+    {
+      "priority": "high",
+      "category": "Testing",
+      "description": "Create dedicated unit test suite for src/subscription.ts covering expiration dates, renewal transitions, and billing math.",
+      "files": [
+        "src/subscription.ts"
+      ]
+    },
+    {
+      "priority": "high",
+      "category": "Architecture",
+      "description": "Refactor tier limit checks from nested conditional statements into a declarative Strategy pattern.",
+      "files": [
+        "src/subscription.ts"
+      ]
     }
   ],
   "metadata": {
-    "analyzedAt": "2026-09-26T00:00:00.000Z",
-    "duration": 47085,
+    "analyzedAt": "2026-09-26T10:14:22.351Z",
+    "duration": 25400,
     "agentVersions": {
       "orchestrator": "1.0.0",
       "code-quality-analyzer": "1.0.0",
