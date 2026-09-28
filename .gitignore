@@ -24,11 +24,10 @@ npm-debug.log*
 
 # TypeScript
 *.tsbuildinfo
-
+*.txt
+.txt
 
 # Temporary files
 tmp*
 
-#claude settings
-.claude/
-.claude/settings.local.json
+

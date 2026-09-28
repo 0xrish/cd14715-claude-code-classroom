@@ -27,6 +27,10 @@ Since you cannot run tests, use static analysis:
 - **medium**: Helper functions, edge cases for tested functions
 - **low**: Simple getters/setters, configuration code, trivially correct code
 
+## Skill Usage
+- When analyzing test completeness for TypeScript files, invoke the 'typescript-patterns' skill for typing and test boundary expectations.
+- When evaluating tests around security-sensitive code paths (auth, input validation, encryption), invoke the 'security-analysis' skill to identify critical edge cases that require tests.
+
 ## Output Format
 Return a JSON object matching this exact structure:
 {

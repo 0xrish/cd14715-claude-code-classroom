@@ -7,6 +7,34 @@ import { buildOrchestratorPrompt } from './prompts/orchestrator.prompt.js';
 import { logger } from './utils/logger.js';
 
 /**
+ * Tool permissions explicitly derived from connected MCP servers and core SDK capabilities:
+ *
+ * 1. Built-in SDK Tools:
+ *    - 'Task': Spawns parallel subagents (code-quality-analyzer, test-coverage-analyzer, refactoring-suggester)
+ *    - 'Read', 'Grep', 'Glob': Local codebase discovery and context retrieval
+ *    - 'Skill': Enables invoking domain-specific Claude Skills (.claude/skills/*)
+ *
+ * 2. GitHub MCP Server ('github' in mcpServersConfig):
+ *    - 'mcp__github__get_pull_request': Fetches PR metadata and description
+ *    - 'mcp__github__list_pull_request_files': Lists all changed files in the PR
+ *    - 'mcp__github__get_file_contents': Retrieves PR file contents
+ *
+ * 3. ESLint MCP Server ('eslint' in mcpServersConfig):
+ *    - 'mcp__eslint__lint_files': Automated static analysis and lint rule enforcement
+ */
+export const ORCHESTRATOR_ALLOWED_TOOLS = [
+  'Task',
+  'Read',
+  'Grep',
+  'Glob',
+  'Skill',
+  'mcp__github__get_pull_request',
+  'mcp__github__list_pull_request_files',
+  'mcp__github__get_file_contents',
+  'mcp__eslint__lint_files'
+];
+
+/**
  * Orchestrator configuration options
  */
 export interface OrchestratorOptions {
@@ -58,12 +86,10 @@ export class CodeReviewOrchestrator {
       ...this.customMcpServers
     };
 
-    // Configure the SDK query options
+    // Configure the SDK query options with safe permissions (no dangerous bypassing)
     const options: Options = {
       model,
       maxTurns: this.maxTurns,
-      permissionMode: 'bypassPermissions' as const,
-      allowDangerouslySkipPermissions: true,
       mcpServers,
       // Register all three subagents for Task tool invocation
       agents: {
@@ -71,18 +97,8 @@ export class CodeReviewOrchestrator {
         'test-coverage-analyzer': testCoverageAnalyzer,
         'refactoring-suggester': refactoringSuggester
       },
-      // Allow tools needed for orchestration
-      allowedTools: [
-        'Task',           // Required for spawning subagents
-        'Read',           // File reading
-        'Grep',           // Pattern search
-        'Glob',           // File discovery
-        'Skill',          // Claude Skills
-        'mcp__github__get_pull_request',
-        'mcp__github__list_pull_request_files',
-        'mcp__github__get_file_contents',
-        'mcp__eslint__lint_files'
-      ],
+      // Allow tools explicitly derived from connected MCP servers & core capabilities
+      allowedTools: [...ORCHESTRATOR_ALLOWED_TOOLS],
       // Configure structured output to match ReviewReportSchema
       outputFormat: {
         type: 'json_schema' as const,

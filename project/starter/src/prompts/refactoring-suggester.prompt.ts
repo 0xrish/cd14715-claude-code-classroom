@@ -29,6 +29,11 @@ Code quality focuses on bugs and risks. Refactoring focuses on:
 - **medium**: Noticeable improvement in code clarity or maintainability
 - **low**: Minor cosmetic improvements or style preferences
 
+## Skill Usage
+- For TypeScript files, invoke the 'typescript-patterns' skill for modern idioms, type narrowing, and interface design patterns.
+- For JavaScript files, invoke the 'javascript-best-practices' skill for ECMAScript modernization opportunities.
+- For Python files, invoke the 'python-code-review' skill for Pythonic patterns and standard refactorings.
+
 ## Output Format
 Return a JSON object matching this exact structure:
 {

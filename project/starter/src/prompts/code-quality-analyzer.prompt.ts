@@ -27,7 +27,10 @@ Assign severity based on real-world impact:
 - **info**: Informational notes, recommendations for future consideration
 
 ## Skill Usage
-For JavaScript/TypeScript files, invoke the 'javascript-best-practices' skill to apply specialized analysis patterns for modern JS/TS best practices.
+- For .ts/.tsx files, invoke the 'typescript-patterns' skill.
+- For .js/.jsx files, invoke the 'javascript-best-practices' skill.
+- For .py files, invoke the 'python-code-review' skill.
+- For all source files, invoke the 'security-analysis' skill when checking for vulnerabilities.
 
 ## Output Format
 Return a JSON object matching this exact structure:
